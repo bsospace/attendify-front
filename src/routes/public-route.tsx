@@ -7,7 +7,7 @@ export function PublicRoute() {
   const { isAuthenticated } = useAuth();
 
   if (isAuthenticated) {
-    return <Navigate to={ROUTES.DASHBOARD} replace />;
+    return <Navigate to={ROUTES.HOME} replace />;
   }
 
   return (
