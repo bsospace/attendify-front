@@ -1,0 +1,14 @@
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: attendify-frontend-release
+    env_file:
+      - .env
+    ports:
+      - "${VITE_PORT}:80"
+    volumes:
+      - .:/app
+      - /app/node_modules
+      - /app/dist
