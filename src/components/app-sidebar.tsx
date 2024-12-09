@@ -32,8 +32,8 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
             icon: House,
         },
         {
-            title: "Dashboard",
-            url: ROUTES.DASHBOARD,
+            title: "My Activities",
+            url: ROUTES.ACTIVITY.ME,
             icon: Monitor,
         },
     ]

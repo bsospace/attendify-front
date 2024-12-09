@@ -2,6 +2,10 @@
 @tailwind components;
 @tailwind utilities;
 
+@viewport {  
+  orientation: portrait;  
+}  
+
 :root {
   font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;
@@ -9,7 +13,7 @@
 
   color-scheme: light dark;
   color: rgba(255, 255, 255, 0.87);
-  background-color: #242424;
+  background-color: white;
 
   font-synthesis: none;
   text-rendering: optimizeLegibility;
@@ -95,5 +99,42 @@
   }
   body {
     @apply bg-background text-foreground;
+  }
+}
+
+@media only screen and (pointer: coarse) and (min-width: 320px) and (max-width: 812px) and (orientation: landscape) {
+  html {
+    transform: rotate(-90deg);
+    transform-origin: left top;
+    width: 100vh;
+    overflow-x: hidden;
+    position: absolute;
+    top: 100%;
+    left: 0;
+  }
+}
+
+.pattern-particles {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none; /* Prevent interaction */
+  background: radial-gradient(circle, rgba(0, 0, 0, 0.4) 2px, transparent 2px);
+  background-size: 30px 30px; /* Adjust pattern density */
+  opacity: 0.2; /* Adjust visibility */
+  animation: move-pattern 20s linear infinite; /* Slower, smoother animation */
+}
+
+@keyframes move-pattern {
+  0% {
+    background-position: 0 0;
+  }
+  50% {
+    background-position: 25px 25px; /* Intermediate movement for seamless effect */
+  }
+  100% {
+    background-position: 50px 50px; /* Smooth loop endpoint */
   }
 }

@@ -3,16 +3,14 @@ import { useAuth } from '@/hooks/useAuth';
 import { useEffect } from 'react';
 import { useBreadcrumb } from '@/providers/breadcrumb-provider';
 
-export function DashboardPage() {
+export function HomePage() {
   const { user } = useAuth();
 
   const [, setBreadcrumbs] = useBreadcrumb();
 
   useEffect(() => {
     setBreadcrumbs([
-      { name: "Home", href: "/" },
-      { name: "Components", href: "/components" },
-      { name: "Some Page" },
+      { name: "Home" }
     ]);
 
     return () => setBreadcrumbs(null);
