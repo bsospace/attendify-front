@@ -31,7 +31,7 @@ export class AuthController {
     }
   }
 
-  static async logout(req: Request, res: Response) {
+  static async logout(_req: Request, res: Response) {
     res.clearCookie('token');
     res.json({ message: 'Logout successful' });
   }
@@ -45,6 +45,8 @@ export class AuthController {
       }
 
       const decoded = jwt.verify(token as string, config.jwtSecret);
+
+      console.log(decoded);
 
       // Update user verification status (implement your database logic here)
 
