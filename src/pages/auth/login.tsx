@@ -36,7 +36,7 @@ export function LoginPage() {
   return (
     <div className="space-y-6">
       <div className="space-y-2 text-center">
-        <img src={config.appLogo} alt={config.appName} className='h-32 mx-auto rounded-lg' />
+        <img src={config.appLogo} alt={config.appName} className='mb-4 h-32 mx-auto rounded-lg' />
         <h1 className="text-2xl font-bold">{config.appName}</h1>
         <p className="text-gray-500">Enter your credentials to sign in</p>
       </div>

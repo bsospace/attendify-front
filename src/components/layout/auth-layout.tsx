@@ -17,7 +17,7 @@ export function AuthLayout({ children }: AuthLayoutProps) {
           {children}
         </div>
         <span className="absolute bottom-4 text-gray-500 text-sm">
-          - {config.appTagline} -
+          - {config.appTagline} by BSO Space -
         </span>
       </div>
     </div>
