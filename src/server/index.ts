@@ -21,7 +21,7 @@ app.use(cookieParser());
 app.use('/auth', authRoutes);
 
 // Error handling
-app.use((err: Error, req: express.Request, res: express.Response, next: express.NextFunction) => {
+app.use((err: Error, _req: express.Request, res: express.Response, _next: express.NextFunction) => {
   if (err instanceof ApiError) {
     return res.status(err.status).json({
       error: {

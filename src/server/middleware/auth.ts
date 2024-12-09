@@ -13,7 +13,7 @@ export interface AuthRequest extends Request {
 
 export const verifyToken = (
   req: AuthRequest,
-  res: Response,
+  _res: Response,
   next: NextFunction
 ) => {
   try {

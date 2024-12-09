@@ -24,7 +24,7 @@ router.post('/logout', verifyToken, AuthController.logout);
 router.get('/verify', AuthController.verify);
 
 router.get('/me', verifyToken, (req, res) => {
-  res.json({ user: req.user });
+  res.json({ user: req });
 });
 
 export { router as authRoutes };

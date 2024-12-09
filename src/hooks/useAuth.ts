@@ -25,7 +25,7 @@ export const useAuth = create<AuthState>((set) => ({
   isAuthenticated: false,
   isLoading: false,
 
-  login: async (email: string, password: string) => {
+  login: async (_email: string, _password: string) => {
     set({ isLoading: true });
     try {
       // const response = await apiClient.post(API_ENDPOINTS.AUTH.LOGIN, {
@@ -69,7 +69,7 @@ export const useAuth = create<AuthState>((set) => ({
     set({ isLoading: true });
     try {
       const response = await apiClient.get(API_ENDPOINTS.USERS.PROFILE);
-      set({ user: response.data, isAuthenticated: true });
+      set({ user: response.data as User, isAuthenticated: true });
     } finally {
       set({ isLoading: false });
     }
