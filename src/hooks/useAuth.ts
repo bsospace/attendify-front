@@ -2,7 +2,7 @@ import { create } from 'zustand';
 import { apiClient } from '@/services/api';
 import { API_ENDPOINTS } from '@/lib/constants';
 
-interface User {
+export interface User {
   id: string;
   username: string;
   first_name: string;

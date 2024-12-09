@@ -1,10 +1,10 @@
-import { useAuth } from '@/hooks/useAuth';
+import { useAuth, User } from '@/hooks/useAuth';
 import { useEffect } from 'react';
 import { useBreadcrumb } from '@/providers/breadcrumb-provider';
 import { useParams } from 'react-router-dom';
 
 export function GroupPage() {
-    const { user } = useAuth();
+    const { user } = useAuth() as { user: User };
     const { id } = useParams();
 
     const [, setBreadcrumbs] = useBreadcrumb();
@@ -12,7 +12,7 @@ export function GroupPage() {
     useEffect(() => {
         setBreadcrumbs([
         { name: "Group", href: "/groups" },
-        { name: id }
+        { name: `${id}` }
         ]);
 
         return () => setBreadcrumbs(null);
@@ -22,6 +22,7 @@ export function GroupPage() {
         <div className="space-y-6">
         this is the view group page
         id: {id}
+        user: {user?.username}
         </div>
     );
 }

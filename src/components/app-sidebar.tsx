@@ -4,6 +4,8 @@ import * as React from "react"
 import {
     House,
     Monitor,
+    CalendarDays,
+    SquareChartGantt,
 } from "lucide-react";
 import { Link } from "react-router-dom";
 import { ROUTES } from "@/lib/constants";
@@ -32,9 +34,38 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
             icon: House,
         },
         {
+            title: "Calendar",
+            url: ROUTES.CALENDAR,
+            icon: CalendarDays,
+        },
+        {
             title: "My Activities",
             url: ROUTES.ACTIVITY.ME,
+            icon: SquareChartGantt,
+        },
+        {
+            title: "Managements",
             icon: Monitor,
+            isActive: true,
+            url: "#",
+            items: [
+                {
+                    title: "Projects",
+                    url: ROUTES.PROJECT.BASE,
+                },
+                {
+                    title: "Users",
+                    url: ROUTES.USER.BASE,
+                },
+                {
+                    title: "Groups",
+                    url: ROUTES.GROUP.BASE,
+                },
+                {
+                    title: "Locations",
+                    url: ROUTES.LOCATION.BASE,
+                },
+            ],
         },
     ]
 
