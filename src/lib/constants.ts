@@ -5,6 +5,7 @@ export const API_ENDPOINTS = {
     LOGIN: '/auth/login',
     REGISTER: '/auth/register',
     LOGOUT: '/auth/logout',
+    ME: '/auth/me',
   },
   USERS: {
     BASE: '/users',
@@ -47,5 +48,58 @@ export const ROUTES = {
     VIEW: '/group/:id',     // ดูรายละเอียดกลุ่ม AT03.5.1
     CREATE: '/group/create', // สร้างกลุ่ม AT03.5.2
     EDIT: '/group/:id/edit', // แก้ไขกลุ่ม AT03.5.3
+  },
+} as const;
+
+export const PERMISSIONS = {
+  AUTH: {
+    LOGIN: 'auth:login',
+    REGISTER: 'auth:register',
+    LOGOUT: 'auth:logout',
+    ME: 'auth:me',
+  },
+  USERS: {
+    BASE: 'users:base',
+    PROFILE: 'users:profile',
+    VIEW: 'users:view',
+    CREATE: 'users:create',
+    EDIT: 'users:edit',
+    DELETE: 'users:delete',
+  },
+  GROUPS: {
+    BASE: 'groups:base',
+    VIEW: 'groups:view',
+    CREATE: 'groups:create',
+    EDIT: 'groups:edit',
+    DELETE: 'groups:delete',
+  },
+  PROJECTS: {
+    BASE: 'projects:base',
+    VIEW: 'projects:view',
+    CREATE: 'projects:create',
+    EDIT: 'projects:edit',
+    DELETE: 'projects:delete',
+    RESTORE: 'projects:restore',
+  },
+  ACTIVITIES: {
+    BASE: 'activities:base',
+    VIEW: 'activities:view',
+    CREATE: 'activities:create',
+    EDIT: 'activities:edit',
+    DELETE: 'activities:delete',
+    MY_ACTIVITIES: 'activities:my_activities',
+  },
+  LOCATIONS: {
+    BASE: 'locations:base',
+    VIEW: 'locations:view',
+    CREATE: 'locations:create',
+    EDIT: 'locations:edit',
+    DELETE: 'locations:delete',
+  },
+  CALENDAR: {
+    VIEW: 'calendar:view',
+  },
+  SCAN: {
+    PARTICIPATE: 'scan:participate',
   },
 } as const;
