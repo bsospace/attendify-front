@@ -15,7 +15,8 @@ export const API_ENDPOINTS = {
 
 export const ROUTES = {
   HOME: '/',                // หน้าหลัก
-  LOGIN: '/login',          // เข้าสู่ระบบ
+  LOGIN: '/login', 
+  CALLBACK:'/callback',         // เข้าสู่ระบบ
   PROFILE: '/profile',      // โปรไฟล์ AT03.1.2
   CALENDAR: '/calendar',    // ปฏิทิน AT01.6
   SCAN: '/scan',            // เข้าร่วมโครงการ AT01.8
