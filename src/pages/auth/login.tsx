@@ -34,9 +34,9 @@ export function LoginPage() {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="max-w-sm mx-auto p-6 space-y-6">
       <div className="space-y-2 text-center">
-        <img src={config.appLogo} alt={config.appName} className='mb-4 h-32 mx-auto rounded-lg' />
+        <img src={config.appLogo} alt={config.appName} className='mb-4 md:h-32 h-16 mx-auto rounded-lg' />
         <h1 className="text-2xl font-bold">{config.appName}</h1>
         <p className="text-gray-500">Enter your credentials to sign in</p>
       </div>
@@ -82,7 +82,7 @@ export function LoginPage() {
       </form>
       <div className="text-center">
         <p className="text-gray-500">Or sign in with</p>
-        <div className="flex justify-center space-x-4 mt-4">
+        <div className="md:flex justify-center md:space-x-4 md:space-y-0 space-y-1 mt-4">
           <Button 
             variant="outline"
             className="w-full hover:bg-red-500 hover:text-white hover:border-red-500"
