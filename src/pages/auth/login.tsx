@@ -14,7 +14,7 @@ import { FaGoogle, FaGithub, FaDiscord } from 'react-icons/fa'
 type LoginFormData = z.infer<typeof loginSchema>
 
 export function LoginPage () {
-  const { login, isLoading } = useAuth()
+  const { login, isLoading, oauthLogin } = useAuth()
   const [error, setError] = useState<string>('')
 
   const {
@@ -90,6 +90,7 @@ export function LoginPage () {
         <p className='text-gray-500'>Or sign in with</p>
         <div className='md:flex justify-center md:space-x-4 md:space-y-0 space-y-1 mt-4'>
           <Button
+            onClick={() => oauthLogin('google')}
             variant='outline'
             className='w-full hover:bg-red-500 hover:text-white hover:border-red-500'
           >
@@ -97,6 +98,7 @@ export function LoginPage () {
             Google
           </Button>
           <Button
+            onClick={() => oauthLogin('github')}
             variant='outline'
             className='w-full hover:bg-black hover:text-white hover:border-black'
           >
@@ -104,6 +106,7 @@ export function LoginPage () {
             GitHub
           </Button>
           <Button
+            onClick={() => oauthLogin('discord')}
             variant='outline'
             className='w-full hover:bg-blue-500 hover:text-white hover:border-blue-500'
           >
