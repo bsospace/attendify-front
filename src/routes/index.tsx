@@ -24,9 +24,6 @@ import { RestoreProjectPage } from '@/pages/projects/restore';
 
 // Locations
 import { AllLocationPage } from '@/pages/locations';
-import { LocationPage } from '@/pages/locations/view';
-import { CreateLocationPage } from '@/pages/locations/create';
-import { EditLocationPage } from '@/pages/locations/edit';
 
 // Users
 import { AllUserPage } from '@/pages/users';
@@ -64,9 +61,6 @@ const privateRoutes = [
 
   // Locations
   { path: ROUTES.LOCATION.BASE, element: <AllLocationPage /> },
-  { path: ROUTES.LOCATION.VIEW, element: <LocationPage /> },
-  { path: ROUTES.LOCATION.CREATE, element: <CreateLocationPage /> },
-  { path: ROUTES.LOCATION.EDIT, element: <EditLocationPage /> },
 
   // Users
   { path: ROUTES.USER.BASE, element: <AllUserPage /> },
