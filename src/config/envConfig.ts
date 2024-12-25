@@ -1,7 +1,7 @@
 interface IEnv {
     apiUrl: string;
     apiOpenIdConnectUrl: string;
-    appUrl: string;
+    appUrlCallback: string;
 }
 
 const requireEnv = (key: string): string => {
@@ -17,5 +17,5 @@ const requireEnv = (key: string): string => {
 export const envConfig: IEnv = {
     apiUrl: requireEnv('VITE_API_URL'),
     apiOpenIdConnectUrl: requireEnv('VITE_API_OPENIDCONNECT_URL'),
-    appUrl: requireEnv('VITE_APP_URL'),
+    appUrlCallback: requireEnv('VITE_APP_URL_CALL_BAK'),
 };
