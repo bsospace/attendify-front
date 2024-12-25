@@ -1,45 +1,47 @@
-import { Routes, Route } from 'react-router-dom';
-import { ROUTES } from '@/lib/constants';
-import { PrivateRoute } from './private-route';
-import { PublicRoute } from './public-route';
-import { BreadcrumbProvider } from "@/providers/breadcrumb-provider";
-import { NotFoundPage } from '@/pages/not-found';
-import { LoginPage } from '@/pages/auth/login';
-import { HomePage } from '@/pages/home';
-import { ProfilePage } from '@/pages/profile';
-import { CalendarPage } from '@/pages/calendar';
-import { ScanPage } from '@/pages/scan';
+import { Routes, Route } from 'react-router-dom'
+import { ROUTES } from '@/lib/constants'
+import { PrivateRoute } from './private-route'
+import { PublicRoute } from './public-route'
+import { BreadcrumbProvider } from '@/providers/breadcrumb-provider'
+import { NotFoundPage } from '@/pages/not-found'
+import { LoginPage } from '@/pages/auth/login'
+import { HomePage } from '@/pages/home'
+import { ProfilePage } from '@/pages/profile'
+import { CalendarPage } from '@/pages/calendar'
+import { ScanPage } from '@/pages/scan'
 
 // Activities
-import { AllActivityPage } from '@/pages/activities';
-import { ActivityPage } from '@/pages/activities/view';
-import { MyActivityPage } from '@/pages/activities/me';
+import { AllActivityPage } from '@/pages/activities'
+import { ActivityPage } from '@/pages/activities/view'
+import { MyActivityPage } from '@/pages/activities/me'
 
 // Projects
-import { AllProjectPage } from '@/pages/projects';
-import { ProjectPage } from '@/pages/projects/view';
-import { CreateProjectPage } from '@/pages/projects/create';
-import { EditProjectPage } from '@/pages/projects/edit';
-import { RestoreProjectPage } from '@/pages/projects/restore';
+import { AllProjectPage } from '@/pages/projects'
+import { ProjectPage } from '@/pages/projects/view'
+import { CreateProjectPage } from '@/pages/projects/create'
+import { EditProjectPage } from '@/pages/projects/edit'
+import { RestoreProjectPage } from '@/pages/projects/restore'
 
 // Locations
-import { AllLocationPage } from '@/pages/locations';
+import { AllLocationPage } from '@/pages/locations'
 
 // Users
-import { AllUserPage } from '@/pages/users';
-import { UserPage } from '@/pages/users/view';
-import { CreateUserPage } from '@/pages/users/create';
-import { EditUserPage } from '@/pages/users/edit';
+import { AllUserPage } from '@/pages/users'
+import { UserPage } from '@/pages/users/view'
+import { CreateUserPage } from '@/pages/users/create'
+import { EditUserPage } from '@/pages/users/edit'
 
 // Groups
-import { AllGroupPage } from '@/pages/groups';
-import { GroupPage } from '@/pages/groups/view';
-import { CreateGroupPage } from '@/pages/groups/create';
-import { EditGroupPage } from '@/pages/groups/edit';
+import { AllGroupPage } from '@/pages/groups'
+import { GroupPage } from '@/pages/groups/view'
+import { CreateGroupPage } from '@/pages/groups/create'
+import { EditGroupPage } from '@/pages/groups/edit'
+import Callback from '@/pages/auth/callback'
 
 const publicRoutes = [
   { path: ROUTES.LOGIN, element: <LoginPage /> },
-];
+  { path: ROUTES.CALLBACK, element: <Callback /> }
+]
 
 const privateRoutes = [
   { path: ROUTES.HOME, element: <HomePage /> },
@@ -72,10 +74,10 @@ const privateRoutes = [
   { path: ROUTES.GROUP.BASE, element: <AllGroupPage /> },
   { path: ROUTES.GROUP.VIEW, element: <GroupPage /> },
   { path: ROUTES.GROUP.CREATE, element: <CreateGroupPage /> },
-  { path: ROUTES.GROUP.EDIT, element: <EditGroupPage /> },
-];
+  { path: ROUTES.GROUP.EDIT, element: <EditGroupPage /> }
+]
 
-export function AppRoutes() {
+export function AppRoutes () {
   return (
     <BreadcrumbProvider>
       <Routes>
@@ -94,8 +96,8 @@ export function AppRoutes() {
         </Route>
 
         {/* Fallback Route */}
-        <Route path="*" element={<NotFoundPage />} />
+        <Route path='*' element={<NotFoundPage />} />
       </Routes>
     </BreadcrumbProvider>
-  );
+  )
 }
