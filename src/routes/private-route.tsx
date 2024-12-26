@@ -4,7 +4,7 @@ import { useAuth } from '@/hooks/useAuth';
 import { PageLayout } from '@/components/layout/page-layout';
 
 export function PrivateRoute() {
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated} = useAuth();
 
   if (!isAuthenticated) {
     return <Navigate to={ROUTES.LOGIN} replace />;
