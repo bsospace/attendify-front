@@ -7,6 +7,12 @@ export const API_ENDPOINTS = {
     LOGOUT: '/auth/logout',
     ME: '/auth/me',
   },
+  LOCATIONS:{
+    BASE: '/location',
+    VIEW: '/location/:id',
+    CREATE: '/location/create',
+    EDIT: '/location/:id/edit',
+  },
   USERS: {
     BASE: '/users',
     PROFILE: '/users/profile',
