@@ -278,7 +278,6 @@ export const columns: ColumnDef<Location>[] = [
     },
 ];
 
-
 export function AllLocationPage() {
     const { user } = useAuth() as { user: User };
 
