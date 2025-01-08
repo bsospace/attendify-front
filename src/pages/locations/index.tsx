@@ -122,7 +122,7 @@ export const columns: ColumnDef<Location>[] = [
 ]
 
 export function AllLocationPage () {
-  const { user } = useAuth() as { user: User }
+  const { user } = useAuth() as { user: User };
 
   const [, setBreadcrumbs] = useBreadcrumb()
 
@@ -149,10 +149,12 @@ export function AllLocationPage () {
 
   return (
     <div className='space-y-6'>
-      <h1 className='text-3xl font-bold'>
-        Welcome, {user.first_name && user.last_name ? user.username : ''}
-      </h1>
-      <ViewLocation />
+      <div className=' flex justify-between'>
+        <h1 className='text-3xl font-bold'>
+          Welcome, {user?.username}!
+        </h1>
+        <ViewLocation />
+      </div>
       <DataTable columns={columns} data={locations} />
     </div>
   )
