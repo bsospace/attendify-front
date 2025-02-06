@@ -23,9 +23,12 @@ import { Trash, Check, X, Locate } from "lucide-react";
 import { Toaster, toast } from "sonner";
 import { Input } from "@/components/ui/input";
 import axios from "axios";
+import { apiClient } from "@/services/api";
+import { envConfig } from "@/config/envConfig";
+import { API_ENDPOINTS } from "@/lib/constants";
 
 export function ViewLocation() {
-    const initialLocationDetails = {
+    const initialLocation = {
         name: "New Location",
         latitude: "13.736717",
         longitude: "100.523186",
@@ -34,20 +37,23 @@ export function ViewLocation() {
     const initialRooms = ["Room 1"];
 
     const [rooms, setRooms] = useState<string[]>(initialRooms);
-    const [locationDetails, setLocationDetails] = useState(initialLocationDetails);
-        const [tempCoordinates, setTempCoordinates] = useState({
-        latitude: locationDetails.latitude,
-        longitude: locationDetails.longitude,
+    const [location, setLocation] = useState(initialLocation);
+    const [tempCoordinates, setTempCoordinates] = useState({
+        latitude: location.latitude,
+        longitude: location.longitude,
     });
+
+    const [existingLocations, setExistingLocations] = useState<Location[]>([]);
 
     const [searchQuery, setSearchQuery] = useState("");
     const [searchResults, setSearchResults] = useState<any[]>([]);
 
     type LocationField = "name" | "latitude" | "longitude";
     const [editingField, setEditingField] = useState<LocationField | null>(null);
-    const [tempFieldValue, setTempFieldValue] = useState<string>("");
+    const [tempFieldValue, setTempFieldValue] = useState<string>(""); // Temporary field value for editing
     const [editingRoomIndex, setEditingRoomIndex] = useState<number | null>(null);
     const [tempRoomValue, setTempRoomValue] = useState<string>("");
+
     const inputRef = useRef<HTMLInputElement | null>(null);
     const tableBodyRef = useRef<HTMLDivElement | null>(null);
 
@@ -58,7 +64,7 @@ export function ViewLocation() {
     useEffect(() => {
         if (mapRef.current && !leafletMapRef.current) {
             leafletMapRef.current = L.map(mapRef.current).setView(
-                [parseFloat(locationDetails.latitude), parseFloat(locationDetails.longitude)],
+                [parseFloat(location.latitude), parseFloat(location.longitude)],
                 13
             );
 
@@ -69,8 +75,8 @@ export function ViewLocation() {
             leafletMapRef.current.on("click", (e: L.LeafletMouseEvent) => {
                 const { lat, lng } = e.latlng;
 
-                setLocationDetails({
-                    ...locationDetails,
+                setLocation({
+                    ...location,
                     latitude: lat.toFixed(6),
                     longitude: lng.toFixed(6),
                 });
@@ -82,7 +88,7 @@ export function ViewLocation() {
             leafletMapRef.current?.remove();
             leafletMapRef.current = null;
         };
-    }, [locationDetails]);
+    }, [location]);
 
     const updateMarker = (latlng: [number, number]) => {
         if (markerRef.current) {
@@ -109,8 +115,8 @@ export function ViewLocation() {
 
     const selectSearchResult = (index: number) => {
         const result = searchResults[index];
-        setLocationDetails({
-            ...locationDetails,
+        setLocation({
+            ...location,
             latitude: result.lat,
             longitude: result.lon,
         });
@@ -118,23 +124,41 @@ export function ViewLocation() {
         setSearchResults([]); // Clear search results after selection
     };
 
-    const handleSaveCoordinates = () => {
-        setLocationDetails((prev) => ({
-            ...prev,
+    const handleSaveCoordinates = async () => {
+        // อัปเดตทั้งชื่อ (name) และพิกัด (coordinates) พร้อมกัน
+        const updatedLocation = {
+            name: location.name, // ใช้ค่าชื่อที่อยู่ใน location
             latitude: tempCoordinates.latitude,
             longitude: tempCoordinates.longitude,
-        }));
+        };
+
+        console.log("updatedLocation", updatedLocation);
+
+        setLocation(updatedLocation); // อัปเดตข้อมูลใน state
         setEditingField(null);
-        updateMarker([
-            parseFloat(tempCoordinates.latitude),
-            parseFloat(tempCoordinates.longitude),
-        ]);
-        toast.success("Coordinates updated successfully!", { position: "top-right" });
+        updateMarker([parseFloat(tempCoordinates.latitude), parseFloat(tempCoordinates.longitude)]);
+
+        try {
+            const response = await apiClient.post(
+                `${envConfig.apiUrl}${API_ENDPOINTS.LOCATIONS.BASE}/create`,
+                updatedLocation
+            );
+
+            if (response.status === 201) {
+                const data = response.data;
+                const newLocation = (data as { data: Location }).data;
+                setExistingLocations([...existingLocations, newLocation]);
+                toast.success("Location updated successfully!", { position: "top-right" });
+            }
+        } catch (error) {
+            console.error("Update error:", error);
+            toast.error("Failed to update location.", { position: "top-right" });
+        }
     };
 
     const handleDialogOpenChange = (isOpen: boolean) => {
         if (isOpen) {
-            setLocationDetails(initialLocationDetails);
+            setLocation(initialLocation);
             setRooms(initialRooms);
             setEditingField(null);
             setEditingRoomIndex(null);
@@ -143,12 +167,12 @@ export function ViewLocation() {
 
     const handleFieldEdit = (field: LocationField) => {
         setEditingField(field);
-        setTempFieldValue(locationDetails[field]);
-        setTimeout(() => inputRef.current?.focus(), 0);
+        setTempFieldValue(location[field]);
+        setTimeout(() => inputRef.current?.focus(), 0); // Focus on input field
     };
 
     const handleFieldSave = (field: LocationField) => {
-        setLocationDetails({ ...locationDetails, [field]: tempFieldValue });
+        setLocation({ ...location, [field]: tempFieldValue });
         setEditingField(null);
 
         // Blur input field after saving
@@ -160,8 +184,8 @@ export function ViewLocation() {
     };
 
     const handleFieldDiscard = () => {
-        setEditingField(null);
-        setTempFieldValue("");
+        setEditingField(null); // Cancel edit mode
+        setTempFieldValue(""); // Reset temp value
     };
 
     const handleRoomEdit = (index: number) => {
@@ -170,9 +194,15 @@ export function ViewLocation() {
         setTimeout(() => inputRef.current?.focus(), 0);
     };
 
-    const handleRoomSave = () => {
+    const handleRoomSave = async () => {
         if (rooms.includes(tempRoomValue) && editingRoomIndex !== rooms.indexOf(tempRoomValue)) {
             toast.error("Room already exists!", { position: "top-right" });
+            return;
+        }
+
+        // Check if there are existing locations before adding room
+        if (existingLocations.length === 0) {
+            toast.error("Please add a location first!", { position: "top-right" });
             return;
         }
 
@@ -180,7 +210,25 @@ export function ViewLocation() {
         updatedRooms[editingRoomIndex!] = tempRoomValue;
         setRooms(updatedRooms);
         setEditingRoomIndex(null);
-        toast.success("Room updated successfully!", { position: "top-right" });
+
+        // Incremental update to the backend
+        try {
+            const response = await apiClient.post(
+                `${envConfig.apiUrl}${API_ENDPOINTS.ROOMS.BASE}/create`,
+                {
+                    existingLocations,
+                    rooms: updatedRooms,
+                }
+            );
+
+            if (response.status === 200) {
+                setExistingLocations(response.data as Location[]);
+                toast.success("Room updated successfully!", { position: "top-right" });
+            }
+        } catch (error) {
+            console.error("Update error:", error);
+            toast.error("Failed to update room.", { position: "top-right" });
+        }
     };
 
     const handleRoomDiscard = () => {
@@ -189,6 +237,12 @@ export function ViewLocation() {
     };
 
     const addRoom = () => {
+        // Check if there are existing locations before allowing room addition
+        if (existingLocations.length === 0) {
+            toast.error("Please add a location first!", { position: "top-right" });
+            return;
+        }
+
         const newRoom = `Room ${rooms.length + 1}`;
         setRooms([...rooms, newRoom]);
         setEditingRoomIndex(rooms.length);
@@ -202,13 +256,12 @@ export function ViewLocation() {
         }, 0);
     };
 
-
     const getUserLocation = () => {
         if (navigator.geolocation) {
             navigator.geolocation.getCurrentPosition(
                 (position) => {
                     const { latitude, longitude } = position.coords;
-                    setLocationDetails((prev) => ({
+                    setLocation((prev) => ({
                         ...prev,
                         latitude: latitude.toFixed(6),
                         longitude: longitude.toFixed(6),
@@ -245,9 +298,19 @@ export function ViewLocation() {
                     <div className="md:flex space-x-6">
                         {/* Left Side: Location Details and Map */}
                         <div className="md:w-2/5 w-full space-y-6">
-                        <Label>Name</Label>
-                            <div className="border-b cursor-pointer" onClick={() => setEditingField("name")}>
-                                {locationDetails.name}
+                            <Label>Name</Label>
+                            <div className="border-b cursor-pointer" onClick={() => handleFieldEdit("name")}>
+                                {editingField === "name" ? (
+                                    <div className="flex items-center space-x-2">
+                                        <Input
+                                            ref={inputRef}
+                                            value={tempFieldValue}
+                                            onChange={(e) => setLocation((prev) => ({ ...prev, name: e.target.value }))}
+                                        />
+                                    </div>
+                                ) : (
+                                    location.name
+                                )}
                             </div>
                             <Label>Coordinates</Label>
                             <div className="flex items-center gap-2">
@@ -284,20 +347,15 @@ export function ViewLocation() {
                             <div>
                                 <Label>Search</Label>
                                 <div className="flex items-center space-x-2">
-                                    <Input 
-                                        placeholder="Search location..." 
+                                    <Input
+                                        placeholder="Search location..."
                                         value={searchQuery}
                                         onChange={(e) => setSearchQuery(e.target.value)}
                                     />
-                                    <Button 
-                                        onClick={handleSearch}
-                                        variant="outline"
-                                    >Search</Button>
-                                    <Button
-                                        size="icon"
-                                        variant="outline"
-                                        onClick={getUserLocation}
-                                    >
+                                    <Button onClick={handleSearch} variant="outline">
+                                        Search
+                                    </Button>
+                                    <Button size="icon" variant="outline" onClick={getUserLocation}>
                                         <Locate className="w-5 h-5" />
                                     </Button>
                                     {searchResults.length > 0 && (
@@ -312,7 +370,7 @@ export function ViewLocation() {
                                             </li>
                                         ))}
                                     </ul>
-                                )}
+                                    )}
                                 </div>
                             </div>
                         </div>
@@ -345,18 +403,10 @@ export function ViewLocation() {
                                                                         setTempRoomValue(e.target.value)
                                                                     }
                                                                 />
-                                                                <Button
-                                                                    variant="ghost"
-                                                                    size="icon"
-                                                                    onClick={handleRoomSave}
-                                                                >
+                                                                <Button variant="ghost" size="icon" onClick={handleRoomSave}>
                                                                     <Check className="w-5 h-5 text-green-500" />
                                                                 </Button>
-                                                                <Button
-                                                                    variant="ghost"
-                                                                    size="icon"
-                                                                    onClick={handleRoomDiscard}
-                                                                >
+                                                                <Button variant="ghost" size="icon" onClick={handleRoomDiscard}>
                                                                     <X className="w-5 h-5 text-red-500" />
                                                                 </Button>
                                                             </div>

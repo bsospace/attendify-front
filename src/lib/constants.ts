@@ -13,6 +13,13 @@ export const API_ENDPOINTS = {
     CREATE: '/location/create',
     EDIT: '/location/:id/edit',
   },
+
+  ROOMS:{
+    BASE: '/room',
+    VIEW: '/room/:id',
+    CREATE: '/room/create',
+    EDIT: '/room/:id/edit',
+  },
   USERS: {
     BASE: '/users',
     PROFILE: '/users/profile',
