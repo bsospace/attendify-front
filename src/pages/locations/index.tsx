@@ -6,6 +6,8 @@ import { DataTable } from '@/components/datatable/app-data-table'
 import { MoreHorizontal } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { DataTableColumnHeader } from '@/components/datatable/app-data-table-header'
+import { Link, useSearchParams } from "react-router-dom";
+
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -17,6 +19,7 @@ import { ViewLocation } from './view'
 import { apiClient } from '@/services/api'
 import { envConfig } from '@/config/envConfig'
 import { API_ENDPOINTS } from '@/lib/constants'
+import { updateSearchParams } from '@/utils/url.util'
 
 // Model
 export type Location = {
@@ -40,8 +43,7 @@ export const columns: ColumnDef<Location>[] = [
       <DataTableColumnHeader column={column} title='No.' />
     ),
     cell: ({ row }) => {
-      const index = row.index + 1 // Add 1 to make the index start from 1
-      return <div className='font-medium'>{index}</div>
+      return <div className='font-medium'>{row.index + 1}</div>
     }
   },
   {
@@ -50,8 +52,7 @@ export const columns: ColumnDef<Location>[] = [
       return <DataTableColumnHeader column={column} title='Name' />
     },
     cell: ({ row }) => {
-      const name: string = row.getValue('name')
-      return <div className='font-medium'>{name}</div>
+      return <div className='font-medium'>{row.original.name}</div>
     }
   },
   // Custom column for the latitude
@@ -61,9 +62,8 @@ export const columns: ColumnDef<Location>[] = [
       return <DataTableColumnHeader column={column} title='Latitude' />
     },
     cell: ({ row }) => {
-      const latitude: string = row.getValue('latitude')
 
-      return <div className='font-medium'>{latitude}</div>
+      return <div className='font-medium'>{row.original.latitude}</div>
     }
   },
   // Custom column for the longtitude
@@ -73,9 +73,7 @@ export const columns: ColumnDef<Location>[] = [
       return <DataTableColumnHeader column={column} title='Longtitude' />
     },
     cell: ({ row }) => {
-      const longtitude: string = row.getValue('longitude')
-
-      return <div className='font-medium'>{longtitude}</div>
+      return <div className='font-medium'>{row.original.longtitude}</div>
     }
   },
 
@@ -121,24 +119,60 @@ export const columns: ColumnDef<Location>[] = [
   }
 ]
 
-export function AllLocationPage () {
+export function AllLocationPage() {
   const { user } = useAuth() as { user: User };
 
   const [, setBreadcrumbs] = useBreadcrumb()
 
   const [locations, setLocations] = useState<Location[]>([])
+  const [searchParams, setSearchParams] = useSearchParams();
+
+  // currentPage is the current page number
+  const [currentPage, setCurrentPage] = useState(
+    Number(searchParams.get("page")) || 1
+  );
+
+  // itemsPerPage is the number of items per page
+  const [itemsPerPage, setItemsPerPage] = useState(
+    Number(searchParams.get("pageSize")) || 10
+  );
+
+  // total is the total number of items
+  const [total, setTotal] = useState(0);
+
+  // totalPages is the total number of pages
+  const [totalPages, setTotalPages] = useState(1);
+
+  // search is the search search
+  const search = searchParams.get("search") || "";
 
   const getLocations = async () => {
     try {
       const response = await apiClient.get(
-        `${envConfig.apiUrl}${API_ENDPOINTS.LOCATIONS.BASE}`
+        `${envConfig.apiUrl}${API_ENDPOINTS.LOCATIONS.BASE}?page=${currentPage}&pageSize=${itemsPerPage}&search=${search}`
       )
-      const data = response.data as Location[]
+
+      const { data, meta } = response as any as { data: Location[]; meta: { total: number, totalPages: number } }
+
       setLocations(data)
+      setTotal(meta.total) // อัปเดตจำนวนข้อมูลทั้งหมด ถ้าคุณมี state สำหรับ pagination
+      setTotalPages(meta.totalPages)
     } catch (e) {
       console.error(e)
     }
   }
+
+  // Update search params when the page changes
+  useEffect(() => {
+    const params = {
+      page: currentPage.toString(),
+      pageSize: itemsPerPage.toString(),
+      ...(search ? { search: search.split(" ") } : {}),
+    };
+
+    updateSearchParams(setSearchParams, params);
+    getLocations();
+  }, [currentPage, itemsPerPage, search]);
 
   useEffect(() => {
     getLocations()
@@ -155,7 +189,7 @@ export function AllLocationPage () {
         </h1>
         <ViewLocation />
       </div>
-      <DataTable columns={columns} data={locations} />
+      <DataTable columns={columns} data={locations} currentPage={currentPage} setCurrentPage={setCurrentPage} itemsPerPage={itemsPerPage} setItemsPerPage={setItemsPerPage} setSearchParams={setSearchParams} updateSearchParams={updateSearchParams} total={total} totalPages={totalPages} searchParams={searchParams} />
     </div>
   )
 }

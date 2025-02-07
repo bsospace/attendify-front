@@ -146,6 +146,7 @@ export function ViewLocation() {
 
             if (response.status === 201) {
                 const data = response.data;
+                console.log("Location created successfully:", data);
                 const newLocation = (data as { data: Location }).data;
                 setExistingLocations([...existingLocations, newLocation]);
                 toast.success("Location updated successfully!", { position: "top-right" });
@@ -201,10 +202,10 @@ export function ViewLocation() {
         }
 
         // Check if there are existing locations before adding room
-        if (existingLocations.length === 0) {
-            toast.error("Please add a location first!", { position: "top-right" });
-            return;
-        }
+        // if (existingLocations.length === 0) {
+        //     toast.error("Please add a location first!", { position: "top-right" });
+        //     return;
+        // }
 
         const updatedRooms = [...rooms];
         updatedRooms[editingRoomIndex!] = tempRoomValue;
@@ -214,7 +215,7 @@ export function ViewLocation() {
         // Incremental update to the backend
         try {
             const response = await apiClient.post(
-                `${envConfig.apiUrl}${API_ENDPOINTS.ROOMS.BASE}/create`,
+                `${envConfig.apiUrl}${API_ENDPOINTS.ROOMS.BASE}/create`,    
                 {
                     existingLocations,
                     rooms: updatedRooms,
@@ -237,11 +238,13 @@ export function ViewLocation() {
     };
 
     const addRoom = () => {
+        console.log(existingLocations.length);
+        
         // Check if there are existing locations before allowing room addition
-        if (existingLocations.length === 0) {
-            toast.error("Please add a location first!", { position: "top-right" });
-            return;
-        }
+        // if (existingLocations.length === 0) {
+        //     toast.error("Please add a location first!", { position: "top-right" });
+        //     return;
+        // }
 
         const newRoom = `Room ${rooms.length + 1}`;
         setRooms([...rooms, newRoom]);
@@ -281,7 +284,6 @@ export function ViewLocation() {
     return (
         <div>
             <Toaster position="top-right" />
-
             <Dialog onOpenChange={handleDialogOpenChange}>
                 <DialogTrigger asChild>
                     <Button>Add New Location</Button>
@@ -304,7 +306,7 @@ export function ViewLocation() {
                                     <div className="flex items-center space-x-2">
                                         <Input
                                             ref={inputRef}
-                                            value={tempFieldValue}
+                                            defaultValue={tempFieldValue}
                                             onChange={(e) => setLocation((prev) => ({ ...prev, name: e.target.value }))}
                                         />
                                     </div>
