@@ -43,8 +43,7 @@ export const columns: ColumnDef<Location>[] = [
       <DataTableColumnHeader column={column} title='No.' />
     ),
     cell: ({ row }) => {
-      const index = row.index + 1 // Add 1 to make the index start from 1
-      return <div className='font-medium'>{index}</div>
+      return <div className='font-medium'>{row.index + 1}</div>
     }
   },
   {
@@ -53,8 +52,7 @@ export const columns: ColumnDef<Location>[] = [
       return <DataTableColumnHeader column={column} title='Name' />
     },
     cell: ({ row }) => {
-      const name: string = row.getValue('name')
-      return <div className='font-medium'>{name}</div>
+      return <div className='font-medium'>{row.original.name}</div>
     }
   },
   // Custom column for the latitude
@@ -64,9 +62,8 @@ export const columns: ColumnDef<Location>[] = [
       return <DataTableColumnHeader column={column} title='Latitude' />
     },
     cell: ({ row }) => {
-      const latitude: string = row.getValue('latitude')
 
-      return <div className='font-medium'>{latitude}</div>
+      return <div className='font-medium'>{row.original.latitude}</div>
     }
   },
   // Custom column for the longtitude
@@ -76,9 +73,7 @@ export const columns: ColumnDef<Location>[] = [
       return <DataTableColumnHeader column={column} title='Longtitude' />
     },
     cell: ({ row }) => {
-      const longtitude: string = row.getValue('longitude')
-
-      return <div className='font-medium'>{longtitude}</div>
+      return <div className='font-medium'>{row.original.longtitude}</div>
     }
   },
 
@@ -158,7 +153,7 @@ export function AllLocationPage() {
       )
 
       const { data, meta } = response as any as { data: Location[]; meta: { total: number, totalPages: number } }
-      
+
       setLocations(data)
       setTotal(meta.total) // อัปเดตจำนวนข้อมูลทั้งหมด ถ้าคุณมี state สำหรับ pagination
       setTotalPages(meta.totalPages)
@@ -174,7 +169,7 @@ export function AllLocationPage() {
       pageSize: itemsPerPage.toString(),
       ...(search ? { search: search.split(" ") } : {}),
     };
-    
+
     updateSearchParams(setSearchParams, params);
     getLocations();
   }, [currentPage, itemsPerPage, search]);
@@ -194,7 +189,7 @@ export function AllLocationPage() {
         </h1>
         <ViewLocation />
       </div>
-      <DataTable columns={columns} data={locations} currentPage={currentPage} setCurrentPage={setCurrentPage} itemsPerPage={itemsPerPage} setItemsPerPage={setItemsPerPage} setSearchParams={setSearchParams} updateSearchParams={updateSearchParams} total={total} totalPages={totalPages} />
+      <DataTable columns={columns} data={locations} currentPage={currentPage} setCurrentPage={setCurrentPage} itemsPerPage={itemsPerPage} setItemsPerPage={setItemsPerPage} setSearchParams={setSearchParams} updateSearchParams={updateSearchParams} total={total} totalPages={totalPages} searchParams={searchParams} />
     </div>
   )
 }

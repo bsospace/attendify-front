@@ -13,6 +13,12 @@ export const API_ENDPOINTS = {
     CREATE: '/location/create',
     EDIT: '/location/:id/edit',
   },
+  GROUPS:{
+    BASE: '/group',
+    VIEW: '/group/:id',
+    CREATE: '/group/create',
+    EDIT: '/group/:id/edit',
+  },
 
   ROOMS:{
     BASE: '/room',
@@ -21,8 +27,8 @@ export const API_ENDPOINTS = {
     EDIT: '/room/:id/edit',
   },
   USERS: {
-    BASE: '/users',
-    PROFILE: '/users/profile',
+    BASE: '/user',
+    PROFILE: '/user/profile',
   },
 } as const;
 

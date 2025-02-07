@@ -39,6 +39,7 @@ interface DataTableProps<TData extends { id: string }, TValue> {
         params: URLSearchParamsInit) => void;
     total: number;
     totalPages: number;
+    searchParams: URLSearchParamsInit;
 }
 
 
@@ -53,6 +54,7 @@ export function DataTable<TData extends { id: string; }, TValue>({
     updateSearchParams,
     total,
     totalPages,
+    searchParams,
 }: DataTableProps<TData, TValue>) {
     const [sorting, setSorting] = React.useState<SortingState>([])
     const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
@@ -82,15 +84,15 @@ export function DataTable<TData extends { id: string; }, TValue>({
             {/* {Table Header} */}
             <div className="flex items-center p-4">
                 <Input
-                    placeholder="Filter name..."
-                    defaultValue={(table.getColumn("name")?.getFilterValue() as string) ?? ""}
+                    placeholder="Filter..."
+                    defaultValue={new URLSearchParams(searchParams as Record<string, string>).get("search") || ""}
                     onChange={(event) => {
-                        table.getColumn("name")?.setFilterValue(event.target.value);
+                        const value = event.target.value;
+                        table.setGlobalFilter(value);
                         const params = new URLSearchParams();
-                        params.set("search", event.target.value);
+                        params.set("search", value);
                         setSearchParams(params);
-                    }
-                    }
+                    }}
                     className="max-w-sm"
                 />
                 <DataTableViewOptions table={table} />
