@@ -1,7 +1,7 @@
 import { useAuth, User } from '@/hooks/useAuth';
 import { useEffect } from 'react';
 import { useBreadcrumb } from '@/providers/breadcrumb-provider';
-import { CreateGroupDialog } from './create';
+import { GroupDialog } from './dialog';
 
 export function AllGroupPage() {
     const { user } = useAuth() as { user: User };
@@ -24,7 +24,7 @@ export function AllGroupPage() {
         this is the view all groups page
         user: {user?.username} <br />
         userid : {user?.id}
-        <CreateGroupDialog />
+        <GroupDialog />
         </div>
     );
 }
