@@ -11,7 +11,7 @@ function App() {
       <ThemeProvider>
         <BrowserRouter>
           <AppRoutes />
-          <Toaster />
+          <Toaster position='top-right' />
         </BrowserRouter>
       </ThemeProvider>
     </ErrorBoundary>

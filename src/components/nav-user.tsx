@@ -27,17 +27,12 @@ import {
 } from "@/components/ui/sidebar"
 import { Link } from "react-router-dom"
 import { ROUTES } from "@/lib/constants"
-import { useAuth } from "@/hooks/useAuth"
+import { useAuth, User } from "@/hooks/useAuth"
 
 export function NavUser({
     user,
     }: {
-    user: {
-        first_name: string
-        last_name: string
-        email: string
-        avatar: string
-    } | null
+    readonly user: User | null
     }) {
     const { logout } = useAuth()
 

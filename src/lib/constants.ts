@@ -48,7 +48,6 @@ export const ROUTES = {
   LOCATION: {
     BASE: '/locations',     // สถานที่ AT02.1
     VIEW: '/location/:id',  // ดูรายละเอียดสถานที่ AT02.1.1
-    CREATE: '/location/create', // สร้างสถานที่ AT02.2
     EDIT: '/location/:id/edit', // แก้ไขสถานที่ AT02.3
   },
   USER: {
