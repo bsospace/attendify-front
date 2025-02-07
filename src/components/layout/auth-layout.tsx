@@ -13,9 +13,7 @@ export function AuthLayout({ children }: AuthLayoutProps) {
 
       {/* Content Overlay */}
       <div className="relative z-10 h-full flex flex-col justify-center items-center">
-        <div className="md:max-w-fit md:max-h-fit md:space-y-8 bg-white md:rounded-lg md:shadow-lg md:w-auto p-8 flex items-center">
-          {children}
-        </div>
+        {children}
         <span className="absolute bottom-4 text-gray-500 text-sm">
           - {config.appTagline} by BSO Space -
         </span>

@@ -1,3 +1,5 @@
+import { useAuth, User } from '@/hooks/useAuth';
+import { GroupDialog } from './dialog';
 import { useAuth, User } from '@/hooks/useAuth'
 import { useEffect, useState } from 'react'
 import { useBreadcrumb } from '@/providers/breadcrumb-provider'
@@ -196,6 +198,7 @@ export function AllGroupPage() {
     <div className="space-y-6">
       this is the view all groups page
       user: {user?.username}
+      <GroupDialog />
       <DataTable
         columns={columns}
         data={groups}
