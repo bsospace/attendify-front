@@ -77,17 +77,6 @@ export function DataTable<TData extends { id: string; }, TValue>({
         },
     })
 
-    React.useEffect(() => {
-        console.log(data);
-    })
-
-    React.useEffect(() => {
-        const params = new URLSearchParams();
-        params.set("page", currentPage.toString());
-        params.set("pageSize", itemsPerPage.toString());
-        setSearchParams(params);
-    }, [currentPage, itemsPerPage, setSearchParams]);
-
     return (
         <div className="rounded-md border">
             {/* {Table Header} */}
@@ -95,8 +84,12 @@ export function DataTable<TData extends { id: string; }, TValue>({
                 <Input
                     placeholder="Filter name..."
                     defaultValue={(table.getColumn("name")?.getFilterValue() as string) ?? ""}
-                    onChange={(event) =>
-                        table.getColumn("name")?.setFilterValue(event.target.value)
+                    onChange={(event) => {
+                        table.getColumn("name")?.setFilterValue(event.target.value);
+                        const params = new URLSearchParams();
+                        params.set("search", event.target.value);
+                        setSearchParams(params);
+                    }
                     }
                     className="max-w-sm"
                 />

@@ -43,11 +43,6 @@ export function DataTablePagination<TData>({
   
   // อัปเดต URL params เมื่อ currentPage หรือ itemsPerPage เปลี่ยน
   useEffect(() => {
-    updateSearchParams(setSearchParams, {
-      page: currentPage.toString(),
-      pageSize: itemsPerPage.toString(),
-    });
-
     table.setPageIndex(currentPage - 1);
     table.setPageSize(itemsPerPage);
   }, [currentPage, itemsPerPage, setSearchParams, updateSearchParams, table]);
@@ -106,7 +101,7 @@ export function DataTablePagination<TData>({
             variant="outline"
             className="h-8 w-8 p-0"
             onClick={() => setCurrentPage(Math.min(currentPage + 1, totalPages))}
-            disabled={currentPage === totalPages}
+            disabled={currentPage >= totalPages}
           >
             <span className="sr-only">Go to next page</span>
             <ChevronRight />
@@ -115,7 +110,7 @@ export function DataTablePagination<TData>({
             variant="outline"
             className="hidden h-8 w-8 p-0 lg:flex"
             onClick={() => setCurrentPage(totalPages)}
-            disabled={currentPage === totalPages}
+            disabled={currentPage >= totalPages}
           >
             <span className="sr-only">Go to last page</span>
             <ChevronsRight />

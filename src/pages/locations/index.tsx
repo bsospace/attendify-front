@@ -154,7 +154,7 @@ export function AllLocationPage() {
   const getLocations = async () => {
     try {
       const response = await apiClient.get(
-        `${envConfig.apiUrl}${API_ENDPOINTS.LOCATIONS.BASE}?page=${currentPage}&pageSize=${itemsPerPage}`
+        `${envConfig.apiUrl}${API_ENDPOINTS.LOCATIONS.BASE}?page=${currentPage}&pageSize=${itemsPerPage}&search=${search}`
       )
 
       const { data, meta } = response as any as { data: Location[]; meta: { total: number, totalPages: number } }
@@ -174,6 +174,7 @@ export function AllLocationPage() {
       pageSize: itemsPerPage.toString(),
       ...(search ? { search: search.split(" ") } : {}),
     };
+    
     updateSearchParams(setSearchParams, params);
     getLocations();
   }, [currentPage, itemsPerPage, search]);
