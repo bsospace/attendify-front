@@ -4,7 +4,7 @@ import { useEffect } from 'react'
 import { useBreadcrumb } from '@/providers/breadcrumb-provider'
 
 export function HomePage () {
-  const { user, isAuthenticated, isLoading } = useAuth()
+  const { user, isAuthenticated } = useAuth()
 
   const [, setBreadcrumbs] = useBreadcrumb()
 
@@ -19,7 +19,7 @@ export function HomePage () {
       {isAuthenticated && (
         <h1 className='text-2xl font-semibold'>
           Welcome back,{' '}
-          {user?.username == null ? user?.email : (user?.email).split('@')[0]}!
+          {user?.username == null ? user?.email ?? '' : (user?.email ?? '').split('@')[0]}!
         </h1>
       )}
 
