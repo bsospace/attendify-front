@@ -25,15 +25,34 @@ import { Input } from "@/components/ui/input"
 import * as React from "react"
 import { DataTablePagination } from "./app-data-table-pagination";
 import { DataTableViewOptions } from "./app-data-table-column-toggle"
+import { SetURLSearchParams, URLSearchParamsInit } from "react-router-dom"
 
 interface DataTableProps<TData extends { id: string }, TValue> {
-    columns: ColumnDef<TData, TValue>[]
-    data: TData[]
+    columns: ColumnDef<TData, TValue>[];
+    data: TData[];
+    currentPage: number;
+    setCurrentPage: (page: number) => void;
+    itemsPerPage: number;
+    setItemsPerPage: (size: number) => void;
+    setSearchParams: SetURLSearchParams
+    updateSearchParams: (setSearchParams: SetURLSearchParams,
+        params: URLSearchParamsInit) => void;
+    total: number;
+    totalPages: number;
 }
+
 
 export function DataTable<TData extends { id: string; }, TValue>({
     columns,
     data,
+    currentPage,
+    setCurrentPage,
+    itemsPerPage,
+    setItemsPerPage,
+    setSearchParams,
+    updateSearchParams,
+    total,
+    totalPages,
 }: DataTableProps<TData, TValue>) {
     const [sorting, setSorting] = React.useState<SortingState>([])
     const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
@@ -57,6 +76,17 @@ export function DataTable<TData extends { id: string; }, TValue>({
             columnVisibility,
         },
     })
+
+    React.useEffect(() => {
+        console.log(data);
+    })
+
+    React.useEffect(() => {
+        const params = new URLSearchParams();
+        params.set("page", currentPage.toString());
+        params.set("pageSize", itemsPerPage.toString());
+        setSearchParams(params);
+    }, [currentPage, itemsPerPage, setSearchParams]);
 
     return (
         <div className="rounded-md border">
@@ -99,12 +129,11 @@ export function DataTable<TData extends { id: string; }, TValue>({
                                 <TableRow
                                     key={row.id}
                                     onClick={() => console.log(data[index].id)}
-                                    
+
                                     className="cursor-pointer hover:bg-gray-100 group"
                                 >
                                     {row.getVisibleCells().map((cell) => (
                                         <TableCell key={cell.id}>
-                                            
                                             {flexRender(cell.column.columnDef.cell, cell.getContext())}
                                         </TableCell>
                                     ))}
@@ -122,7 +151,16 @@ export function DataTable<TData extends { id: string; }, TValue>({
             </div>
             {/* Table Footer */}
             <div className="p-4">
-                <DataTablePagination table={table} />
+                <DataTablePagination
+                    table={table}
+                    currentPage={currentPage}
+                    setCurrentPage={setCurrentPage}
+                    itemsPerPage={itemsPerPage}
+                    setItemsPerPage={setItemsPerPage}
+                    updateSearchParams={updateSearchParams} 
+                    setSearchParams={setSearchParams}
+                    total={total}
+                    totalPages={totalPages}/>
             </div>
         </div>
     )
