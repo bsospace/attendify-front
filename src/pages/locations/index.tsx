@@ -26,7 +26,7 @@ export type Location = {
   id: string
   name: string
   latitude: string
-  longtitude: string
+  longitude: string
   dataLog: any[]
 }
 
@@ -70,10 +70,10 @@ export const columns: ColumnDef<Location>[] = [
   {
     accessorKey: 'longitude',
     header: ({ column }) => {
-      return <DataTableColumnHeader column={column} title='Longtitude' />
+      return <DataTableColumnHeader column={column} title='Longitude' />
     },
     cell: ({ row }) => {
-      return <div className='font-medium'>{row.original.longtitude}</div>
+      return <div className='font-medium'>{row.original.longitude}</div>
     }
   },
 
