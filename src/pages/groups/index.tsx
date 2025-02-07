@@ -1,6 +1,5 @@
 import { useAuth, User } from '@/hooks/useAuth';
 import { GroupDialog } from './dialog';
-import { useAuth, User } from '@/hooks/useAuth'
 import { useEffect, useState } from 'react'
 import { useBreadcrumb } from '@/providers/breadcrumb-provider'
 import { ColumnDef } from '@tanstack/react-table'
