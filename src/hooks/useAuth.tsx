@@ -70,7 +70,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({
         first_name: data.user.first_name,
         last_name: data.user.last_name,
         email: data.user.email,
-        avatar: '',
+        avatar: data.user.avatar,
         roles: data.user.roles,
         premissions: data.user.premissions
       })
@@ -115,7 +115,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({
         first_name: data.first_name,
         last_name: data.last_name,
         email: data.email,
-        avatar: '',
+        avatar: data.avatar,
         roles: data.roles,
         premissions: data.premissions
       })

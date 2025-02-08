@@ -34,7 +34,6 @@ import { EditUserPage } from '@/pages/users/edit'
 // Groups
 import { AllGroupPage } from '@/pages/groups'
 import { GroupPage } from '@/pages/groups/view'
-import { EditGroupPage } from '@/pages/groups/edit'
 import Callback from '@/pages/auth/callback'
 
 const publicRoutes = [
@@ -72,7 +71,6 @@ const privateRoutes = [
   // Groups
   { path: ROUTES.GROUP.BASE, element: <AllGroupPage /> },
   { path: ROUTES.GROUP.VIEW, element: <GroupPage /> },
-  { path: ROUTES.GROUP.EDIT, element: <EditGroupPage /> }
 ]
 
 export function AppRoutes () {

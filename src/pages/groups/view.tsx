@@ -20,6 +20,7 @@ import { useParams, useSearchParams } from 'react-router-dom'
 import { NotFoundPage } from '../not-found'
 import { AxiosError } from 'axios'
 import { updateSearchParams } from '@/utils/url.util'
+import { formatDate } from '@/utils/date.util'
 
 type UsersGroup = {
     id: string;
@@ -27,6 +28,14 @@ type UsersGroup = {
     first_name: string;
     last_name: string;
     email: string;
+}
+
+type Group = {
+    id: string;
+    name: string;
+    description: string;
+    created_at: string;
+    updated_at: string;
 }
 
 // // Custom columns
@@ -126,6 +135,7 @@ export function GroupPage() {
     const { user } = useAuth() as { user: User };
     const { id } = useParams();
     const [usersGroup, setUsersGroup] = useState<UsersGroup[]>([]);
+    const [group, setGroup] = useState<Group>();
     const [notFound, setNotFound] = useState(false);
 
     const [, setBreadcrumbs] = useBreadcrumb();
@@ -155,9 +165,13 @@ export function GroupPage() {
             const response = await apiClient.get(
                 `${envConfig.apiUrl}${API_ENDPOINTS.USERS.BASE}/${id}/get-by-group?pageSize=${itemsPerPage}&page=${currentPage}&search=${search}`
             )
-            const { data, meta } = response as any as { data: UsersGroup[]; meta: { total: number, totalPages: number } }
+            const { data, meta } = response as unknown as { 
+                data: { users: UsersGroup[], group: Group }; 
+                meta: { total: number; totalPages: number } 
+            };
 
-            setUsersGroup(data)
+            setUsersGroup(data.users);
+            setGroup(data.group);
             setTotal(meta.total); // อัปเดตจำนวนข้อมูลทั้งหมด ถ้าคุณมี state สำหรับ pagination
             setTotalPages(meta.totalPages);
         } catch (e: unknown) {
@@ -203,9 +217,17 @@ export function GroupPage() {
 
     return (
         <div className="space-y-6">
-            this is the view group page
-            id: {id}
-            user: {user?.username}
+            <div className="bg-white p-6 rounded-lg shadow-md space-y-4">
+                <h1 className="text-2xl font-bold text-gray-900">Group: {id}</h1>
+
+                <p className="text-gray-700">{group?.description || "No description available."}</p>
+
+                <div className="text-gray-600">
+                    <p><span className="font-semibold">Created At:</span> {group?.created_at ? formatDate(group.created_at) : "N/A"}</p>
+                    <p><span className="font-semibold">Updated At:</span> {group?.updated_at ? formatDate(group.updated_at) : "N/A"}</p>
+                </div>
+            </div>
+
             <DataTable
                 columns={columns}
                 data={usersGroup}
