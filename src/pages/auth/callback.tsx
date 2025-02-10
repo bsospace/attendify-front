@@ -1,6 +1,6 @@
-type Props = {}
+import { Loader2 } from 'lucide-react'
 
-function Callback ({}: Props) {
+function Callback () {
   // get access token and refresh token from url query parameters
   const urlParams = new URLSearchParams(window.location.search)
 
@@ -26,8 +26,8 @@ function Callback ({}: Props) {
   window.location.href = '/'
 
   return (
-    <div>
-      <p>Loading...</p>
+    <div className='flex items-center justify-center h-screen'>
+      <Loader2 className='w-12 h-12 animate-spin' />
     </div>
   )
 }
