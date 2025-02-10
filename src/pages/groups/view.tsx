@@ -1,26 +1,27 @@
-import { useAuth, User } from '@/hooks/useAuth'
 import { useEffect, useState } from 'react'
-import { useBreadcrumb } from '@/providers/breadcrumb-provider'
+import { User } from '@/hooks/useAuth'
 import { ColumnDef } from '@tanstack/react-table'
+import { useBreadcrumb } from '@/providers/breadcrumb-provider'
 import { DataTable } from '@/components/datatable/app-data-table'
-import { MoreHorizontal } from 'lucide-react'
-import { Button } from '@/components/ui/button'
+import { Trash, UserPlus } from 'lucide-react'
 import { DataTableColumnHeader } from '@/components/datatable/app-data-table-header'
-import {
-    DropdownMenu,
-    DropdownMenuContent,
-    DropdownMenuItem,
-    DropdownMenuLabel,
-    DropdownMenuTrigger
-} from '@/components/ui/dropdown-menu'
+import { Button } from '@/components/ui/button'
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { Checkbox } from '@/components/ui/checkbox'
 import { apiClient } from '@/services/api'
-import { envConfig } from '@/config/envConfig'
-import { API_ENDPOINTS, ROUTES } from '@/lib/constants'
+import { API_ENDPOINTS } from '@/lib/constants'
 import { useParams, useSearchParams } from 'react-router-dom'
-import { NotFoundPage } from '../not-found'
-import { AxiosError } from 'axios'
 import { updateSearchParams } from '@/utils/url.util'
 import { formatDate } from '@/utils/date.util'
+import { toast } from "sonner";
+import {
+    Dialog,
+    DialogContent,
+    DialogHeader,
+    DialogTitle,
+    DialogFooter,
+} from "@/components/ui/dialog";
+import { AddMemberDialog } from './addMember'
 
 type UsersGroup = {
     id: string;
@@ -38,11 +39,42 @@ type Group = {
     updated_at: string;
 }
 
-// // Custom columns
-export const columns: ColumnDef<UsersGroup>[] = [
+export const columns = (setIsConfirmOpenOne: (isConfirmOpenOne: boolean) => void, selectedUsers: string[], setSelectedUsers: (users: string[]) => void): ColumnDef<UsersGroup>[] => [
     // Custom column for the name
     {
-        accessorKey: 'index', // You can use an arbitrary name
+        id: "select",
+        header: ({ table }) => (
+            <Checkbox
+                checked={selectedUsers.length > 0 && selectedUsers.length === table.getRowModel().rows.length}
+                onCheckedChange={(value) => {
+                    if (value) {
+                        const allIds = table.getRowModel().rows.map((row) => row.original.id);
+                        setSelectedUsers(allIds.map((id) => id));
+                    } else {
+                        setSelectedUsers([]);
+                    }
+                }}
+                aria-label="Select all"
+            />
+        ),
+        cell: ({ row }) => (
+            <Checkbox
+                checked={selectedUsers.includes(row.original.id)}
+                onCheckedChange={() => {
+                    setSelectedUsers(
+                        selectedUsers.includes(row.original.id)
+                            ? selectedUsers.filter((id) => id !== row.original.id)
+                            : [...selectedUsers, row.original.id]
+                    );
+                }}
+                aria-label="Select row"
+            />
+        ),
+        enableSorting: false,
+        enableHiding: false,
+        },
+    {
+        accessorKey: 'index',
         header: ({ column }) => (
             <DataTableColumnHeader column={column} title='No.' />
         ),
@@ -61,7 +93,7 @@ export const columns: ColumnDef<UsersGroup>[] = [
     },
     // Custom column for the first name
     {
-        accessorKey: 'first_name',
+        accessorKey: 'first name',
         header: ({ column }) => {
             return <DataTableColumnHeader column={column} title='First Name' />
         },
@@ -71,7 +103,7 @@ export const columns: ColumnDef<UsersGroup>[] = [
     },
     // Custom column for the last name
     {
-        accessorKey: 'last_name',
+        accessorKey: 'last name',
         header: ({ column }) => {
             return <DataTableColumnHeader column={column} title='Last Name' />
         },
@@ -97,49 +129,37 @@ export const columns: ColumnDef<UsersGroup>[] = [
             return <DataTableColumnHeader column={column} title='' />
         },
         cell: ({ row }) => {
-            const group = row.original
-
             return (
-                <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                        <Button variant='ghost' className='h-8 w-8 p-0'>
-                            <span className='sr-only'>Open menu</span>
-                            <MoreHorizontal className='h-4 w-4' />
-                        </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent align='end'>
-                        <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                        <DropdownMenuItem
-                            onClick={() => navigator.clipboard.writeText(group.id)}
-                        >
-                            View
-                        </DropdownMenuItem>
-                        <DropdownMenuItem
-                            onClick={() => navigator.clipboard.writeText(group.id)}
-                        >
-                            Edit
-                        </DropdownMenuItem>
-                        <DropdownMenuItem
-                            onClick={() => navigator.clipboard.writeText(group.id)}
-                        >
-                            Delete
-                        </DropdownMenuItem>
-                    </DropdownMenuContent>
-                </DropdownMenu>
+                <TooltipProvider>
+                    <Tooltip>
+                        <TooltipTrigger asChild>
+                            <Trash
+                                className="cursor-pointer h-4 w-4"
+                                onClick={() => {
+                                    setSelectedUsers([row.original.id]);
+                                    setIsConfirmOpenOne(true);
+                                }
+                                }
+                            />
+                        </TooltipTrigger>
+                        <TooltipContent>Delete User</TooltipContent>
+                    </Tooltip>
+                </TooltipProvider>
             )
         }
     }
 ]
 
 export function GroupPage() {
-    const { user } = useAuth() as { user: User };
     const { id } = useParams();
     const [usersGroup, setUsersGroup] = useState<UsersGroup[]>([]);
     const [group, setGroup] = useState<Group>();
-    const [notFound, setNotFound] = useState(false);
-
     const [, setBreadcrumbs] = useBreadcrumb();
     const [searchParams, setSearchParams] = useSearchParams();
+    const [selectedUsers, setSelectedUsers] = useState<string[]>([]);
+    const [isConfirmOpenMany, setIsConfirmOpenMany] = useState(false);
+    const [isConfirmOpenOne, setIsConfirmOpenOne] = useState(false);
+    const [isAddMemberOpen, setIsAddMemberOpen] = useState(false);
 
     // currentPage is the current page number
     const [currentPage, setCurrentPage] = useState(
@@ -163,7 +183,7 @@ export function GroupPage() {
     const getUsersGroup = async () => {
         try {
             const response = await apiClient.get(
-                `${envConfig.apiUrl}${API_ENDPOINTS.USERS.BASE}/${id}/get-by-group?pageSize=${itemsPerPage}&page=${currentPage}&search=${search}`
+                `${API_ENDPOINTS.USERS.BASE}/${id}/get-by-group?pageSize=${itemsPerPage}&page=${currentPage}&search=${search}`
             )
             const { data, meta } = response as unknown as { 
                 data: { users: UsersGroup[], group: Group }; 
@@ -172,27 +192,32 @@ export function GroupPage() {
 
             setUsersGroup(data.users);
             setGroup(data.group);
-            setTotal(meta.total); // อัปเดตจำนวนข้อมูลทั้งหมด ถ้าคุณมี state สำหรับ pagination
+            setTotal(meta.total);
             setTotalPages(meta.totalPages);
-        } catch (e: unknown) {
-            console.error(e)
-            if (e instanceof AxiosError && e.response?.status == 404) {
-                setNotFound(true)
-                console.error('Group not found')
+
+            console.log(group);
+            console.log(usersGroup);
+            
+            
+        } catch (error) {
+            if (error instanceof Error && (error as { details?: { message?: string } }).details?.message) {
+                toast.error((error as unknown as { details: { message: string } }).details.message);
+            } else {
+                toast.error("An unknown error occurred");
             }
         }
     }
 
     useEffect(() => {
         const params = {
-          page: currentPage.toString(),
-          pageSize: itemsPerPage.toString(),
-          ...(search ? { search: search.split(" ") } : {}),
+            page: currentPage.toString(),
+            pageSize: itemsPerPage.toString(),
+            ...(search ? { search: search.split(" ") } : {}),
         };
         
         updateSearchParams(setSearchParams, params);
         getUsersGroup();
-      }, [currentPage, itemsPerPage, search]);
+    }, [currentPage, itemsPerPage, search]);
 
     useEffect(() => {
         const params = {
@@ -211,36 +236,155 @@ export function GroupPage() {
         return () => setBreadcrumbs(null);
     }, [setBreadcrumbs]);
 
-    if (notFound) {
-        return <NotFoundPage />;
+    const deleteUser = async (userId: string) => {
+        try {
+            await apiClient.delete(`group/group-user/${group?.id}/delete`, {
+                data: { users: [{ id: userId }] },
+            }
+            );
+            toast.success("User removed successfully.");
+            setSelectedUsers([]);
+            getUsersGroup();
+        } catch (error) {
+            if (error instanceof Error && (error as { details?: { message?: string } }).details?.message) {
+                toast.error((error as unknown as { details: { message: string } }).details.message);
+            } else {
+                toast.error("An unknown error occurred");
+            }
+        }
+        setIsConfirmOpenOne(false);
     }
+
+    const deleteSelectedUsers = async () => {
+        if (selectedUsers.length === 0) {
+            toast.error("No users selected for deletion.");
+            return;
+        }
+
+        try {
+            await apiClient.delete(`group/group-user/${group?.id}/delete`, {
+                data: { users: selectedUsers.map((id) => ({ id })) },
+            });
+            toast.success(`${selectedUsers.length} users removed successfully.`);
+            setSelectedUsers([]);
+            getUsersGroup();
+        } catch (error) {
+            if (error instanceof Error && (error as { details?: { message?: string } }).details?.message) {
+                toast.error((error as unknown as { details: { message: string } }).details.message);
+            } else {
+                toast.error("An unknown error occurred");
+            }
+        }
+        setIsConfirmOpenMany(false);
+    };
 
     return (
         <div className="space-y-6">
             <div className="bg-white p-6 rounded-lg shadow-md space-y-4">
-                <h1 className="text-2xl font-bold text-gray-900">Group: {id}</h1>
+                <h2 className="text-2xl font-bold text-gray-900">Group: {id}</h2>
 
                 <p className="text-gray-700">{group?.description || "No description available."}</p>
 
-                <div className="text-gray-600">
-                    <p><span className="font-semibold">Created At:</span> {group?.created_at ? formatDate(group.created_at) : "N/A"}</p>
-                    <p><span className="font-semibold">Updated At:</span> {group?.updated_at ? formatDate(group.updated_at) : "N/A"}</p>
+                {/* Show "Latest Update" by default */}
+                <div className="group relative">
+                    <p className="text-gray-600">
+                        <span className="font-semibold">Latest Update:</span> {group?.updated_at ? formatDate(group.updated_at) : "N/A"}
+                    </p>
+
+                    {/* Show "Created At" only on hover */}
+                    <div className="absolute bg-gray-800 text-white text-sm p-3 rounded-md opacity-0 group-hover:opacity-100 transition-opacity duration-200 left-0 mt-1">
+                        <p><span className="font-semibold">Created At:</span> {group?.created_at ? formatDate(group.created_at) : "N/A"}</p>
+                    </div>
                 </div>
             </div>
+            
+            <div className="space-y-4">
+                {/* Table Title */}
+                <div className="flex justify-between items-center h-12">
+                    <h2 className="text-xl font-semibold text-gray-900">Group Members</h2>
+                    <div>
+                        {selectedUsers.length > 0 && (
+                            <Button className="mr-2" variant="destructive" onClick={() => setIsConfirmOpenMany(true)}>
+                                <Trash className="w-4 h-4 mr-2" />
+                                Delete {selectedUsers.length} Selected
+                            </Button>
+                        )}
+                        <Button onClick={() => setIsAddMemberOpen(true)}>
+                            <UserPlus className="w-4 h-4 mr-2" />
+                            Add Member
+                        </Button>
+                    </div>
+                </div>
 
-            <DataTable
-                columns={columns}
-                data={usersGroup}
-                currentPage={currentPage}
-                setCurrentPage={setCurrentPage}
-                itemsPerPage={itemsPerPage}
-                setItemsPerPage={setItemsPerPage}
-                total={total}
-                totalPages={totalPages}
-                setSearchParams={setSearchParams}
-                updateSearchParams={updateSearchParams}
-                searchParams={searchParams}
+                {/* DataTable */}
+                <DataTable
+                    columns={columns(setIsConfirmOpenOne, selectedUsers, setSelectedUsers)}
+                    data={usersGroup}
+                    currentPage={currentPage}
+                    setCurrentPage={setCurrentPage}
+                    itemsPerPage={itemsPerPage}
+                    setItemsPerPage={setItemsPerPage}
+                    total={total}
+                    totalPages={totalPages}
+                    setSearchParams={setSearchParams}
+                    updateSearchParams={updateSearchParams}
+                    searchParams={searchParams}
+                />
+            </div>
+
+            {/* Confirmation Delete Many */}
+            <Dialog open={isConfirmOpenMany} onOpenChange={setIsConfirmOpenMany}>
+                <DialogContent className="max-w-md">
+                    <DialogHeader>
+                        <DialogTitle>Confirm Deletion</DialogTitle>
+                    </DialogHeader>
+                    <p className="text-gray-700">
+                        Are you sure you want to remove <strong>{selectedUsers.length} users</strong> from this group?
+                        This action cannot be undone.
+                    </p>
+                    <DialogFooter>
+                        <Button variant="outline" onClick={() => setIsConfirmOpenMany(false)}>
+                            Cancel
+                        </Button>
+                        <Button variant="destructive" onClick={deleteSelectedUsers}>
+                            Confirm
+                        </Button>
+                    </DialogFooter>
+                </DialogContent>
+            </Dialog>
+
+            {/* Confirmation Delete One */}
+            <Dialog open={isConfirmOpenOne} onOpenChange={setIsConfirmOpenOne}>
+                <DialogContent className="max-w-md">
+                    <DialogHeader>
+                        <DialogTitle>Confirm Deletion</DialogTitle>
+                    </DialogHeader>
+                    <p className="text-gray-700">
+                        Are you sure you want to remove this user from this group?
+                        This action cannot be undone.
+                    </p>
+                    <DialogFooter>
+                        <Button variant="outline" onClick={() => setIsConfirmOpenOne(false)}>
+                            Cancel
+                        </Button>
+                        <Button variant="destructive" onClick={() => deleteUser(selectedUsers[0])}>
+                            Confirm
+                        </Button>
+                    </DialogFooter>
+                </DialogContent>
+            </Dialog>
+
+            {/* Add Member */}
+            <AddMemberDialog
+                id={group?.id || ""}
+                existingUsers={usersGroup as User[] || []}
+                isOpen={isAddMemberOpen}
+                onClose={() => setIsAddMemberOpen(false)}
+                onUpdateUsers={(users) => {
+                    setUsersGroup(users);
+                }}
             />
+
         </div>
     );
 }

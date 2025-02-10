@@ -12,7 +12,7 @@ import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
-import { X, Check } from "lucide-react";
+import { X, Check, Plus } from "lucide-react";
 import { toast } from "sonner";
 
 export function CreateGroupDialog() {
@@ -125,7 +125,10 @@ export function CreateGroupDialog() {
         <div>
             <Dialog open={isOpen} onOpenChange={setIsOpen}>
                 <DialogTrigger asChild>
-                    <Button onClick={openDialog}>Create New Group</Button>
+                    <Button onClick={openDialog} >
+                        <Plus className="w-4 h-4 mr-2" />
+                        Create New Group
+                    </Button>
                 </DialogTrigger>
                 <DialogContent className="max-w-3xl">
                     <DialogHeader>
@@ -202,7 +205,7 @@ export function CreateGroupDialog() {
                                 </div>
                             )}
                         </div>
-                        <div className="flex justify-end space-x-4">
+                        <div className="flex justify-end">
                             <Button onClick={() => setStep(1)}>Back</Button>
                             <Button onClick={handleSubmit}>Create Group</Button>
                         </div>

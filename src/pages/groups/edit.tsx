@@ -63,8 +63,14 @@ export function EditGroupDialog({ existingGroup, isOpen, onClose }: {
             toast.success("Group updated successfully!");
             setIsDirty(false); // Reset dirty state after saving
             onClose();
-        } catch {
-            toast.error("Failed to update group");
+        } catch (error) {
+            if (error instanceof Error && (error as { details?: { message?: string } }).details?.message) {
+                toast.error((error as unknown as { details: { message: string } }).details.message);
+                return false;
+            } else {
+                toast.error("An unknown error occurred");
+                return false;
+            }
         } finally {
             setLoading(false);
         }
