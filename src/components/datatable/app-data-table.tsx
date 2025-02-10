@@ -120,11 +120,9 @@ export function DataTable<TData extends { id: string; }, TValue>({
                     </TableHeader>
                     <TableBody>
                         {table.getRowModel().rows?.length ? (
-                            table.getRowModel().rows.map((row, index) => (
+                            table.getRowModel().rows.map((row) => (
                                 <TableRow
                                     key={row.id}
-                                    onClick={() => console.log(data[index].id)}
-
                                     className="cursor-pointer hover:bg-gray-100 group"
                                 >
                                     {row.getVisibleCells().map((cell) => (
