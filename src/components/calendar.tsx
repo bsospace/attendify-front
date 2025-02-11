@@ -3,7 +3,6 @@
 import { useEvents } from "@/hooks/events-context";
 import "@/styles/calendar.css";
 import {
-  DateSelectArg,
   DayCellContentArg,
   DayHeaderContentArg,
   EventChangeArg,
@@ -42,8 +41,6 @@ export default function Calendar() {
 
   const calendarRef = useRef<FullCalendar | null>(null);
   const [viewedDate, setViewedDate] = useState(new Date());
-  const [selectedStart, setSelectedStart] = useState(new Date());
-  const [selectedEnd, setSelectedEnd] = useState(new Date());
 
   const [selectedEvent, setSelectedEvent] = useState<
     CalendarEvent | undefined
@@ -161,10 +158,6 @@ export default function Calendar() {
     );
   };
 
-  const handleDateSelect = (info: DateSelectArg) => {
-    setSelectedStart(info.start);
-    setSelectedEnd(info.end);
-  };
 
   const earliestHour = getDateFromMinutes(earliestTime)
     .getHours()
@@ -190,8 +183,6 @@ export default function Calendar() {
     <div className="space-y-5">
       <CalendarNav
         calendarRef={calendarRef}
-        start={selectedStart}
-        end={selectedEnd}
         viewedDate={viewedDate}
       />
 
@@ -234,7 +225,6 @@ export default function Calendar() {
           dayHeaderContent={(headerInfo) => <DayHeader info={headerInfo} />}
           eventClick={(eventInfo) => handleEventClick(eventInfo)}
           eventChange={(eventInfo) => handleEventChange(eventInfo)}
-          select={handleDateSelect}
           datesSet={(dates) => setViewedDate(dates.view.currentStart)}
           dateClick={() => setEventAddOpen(true)}
           nowIndicator
