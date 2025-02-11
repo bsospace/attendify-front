@@ -53,7 +53,11 @@ export const EventsProvider: React.FC<{ children: ReactNode }> = ({
   const [availabilityCheckerEventAddOpen, setAvailabilityCheckerEventAddOpen] =
     useState(false);
 
-  const [start, setStart] = useState(new Date());
+  const [start, setStart] = useState(() => {
+    const date = new Date();
+    date.setDate(date.getDate() - 1);
+    return date;
+  });
   const [end, setEnd] = useState(() => {
     const date = new Date();
     date.setDate(date.getDate() + 30);
@@ -63,7 +67,7 @@ export const EventsProvider: React.FC<{ children: ReactNode }> = ({
   // ⏳ Fetch Events from API on mount
   const fetchEvents = async () => {
     try {
-      const response = await apiClient.get(`/project/upcomming?start=${start}&end=${end}`);
+      const response = await apiClient.get(`/project/upcomming?start=${start.toISOString().split('T')[0]}&end=${end.toISOString()}`);
 
       if (!response?.data) {
         return;
