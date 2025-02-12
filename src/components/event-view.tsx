@@ -26,6 +26,7 @@ import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { cn } from "@/lib/utils";
+import { formatFutureDate, formatPastDate } from "@/utils/date.util";
 
 interface EventViewProps {
   eventCalendars?: CalendarEvent;
@@ -47,14 +48,6 @@ export function EventView({ eventCalendars }: EventViewProps) {
   const filteredEvent = events.find((e) => e.id === eventCalendars.id);
   if (!filteredEvent) return null;
 
-  const formatDate = (date: Date) =>
-    date.toLocaleDateString("en-US", {
-      weekday: "long",
-      year: "numeric",
-      month: "long",
-      day: "numeric",
-    });
-
   const isMultiDayEvent = () =>
     new Date(filteredEvent.start_date).toDateString() !==
     new Date(filteredEvent.end_date).toDateString();
@@ -69,8 +62,8 @@ export function EventView({ eventCalendars }: EventViewProps) {
 
   const maxWords = screenWidth < 640 ? 30 : screenWidth < 1024 ? 50 : 100;
   const shortDescription = filteredEvent.description
-    ? filteredEvent.description.split(" ").slice(0, maxWords).join(" ") + 
-      (filteredEvent.description.split(" ").length > maxWords ? "..." : "")
+    ? filteredEvent.description.split(" ").slice(0, maxWords).join(" ") +
+    (filteredEvent.description.split(" ").length > maxWords ? "..." : "")
     : "";
 
   return (
@@ -166,11 +159,11 @@ export function EventView({ eventCalendars }: EventViewProps) {
                     {isMultiDayEvent() ? `${getDurationInDays()} Day Event` : 'Event Date'}
                   </h3>
                   <div className="text-sm sm:text-base text-gray-600 dark:text-gray-400">
-                    Starts: {formatDate(new Date(filteredEvent.start_date))}
+                    Starts: {formatFutureDate(filteredEvent.start_date.toString())}
                   </div>
                   {isMultiDayEvent() && (
                     <div className="text-sm sm:text-base text-gray-600 dark:text-gray-400">
-                      Ends: {formatDate(new Date(filteredEvent.end_date))}
+                      Ends: {formatFutureDate(filteredEvent.end_date.toString())}
                     </div>
                   )}
                 </div>
@@ -192,7 +185,7 @@ export function EventView({ eventCalendars }: EventViewProps) {
                 <div className="relative">
                   <p className={cn(
                     "text-sm sm:text-base text-gray-600 dark:text-gray-400 leading-relaxed pl-7 whitespace-pre-line",
-                    showFullDescription ? "max-h-[320px] overflow-y-auto pr-4" : ""
+                    showFullDescription ? "" : ""
                   )}>
                     {showFullDescription ? filteredEvent.description : shortDescription}
                   </p>
@@ -219,9 +212,9 @@ export function EventView({ eventCalendars }: EventViewProps) {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.3, delay: 0.3 }}
               >
-                <Button 
-                  variant="outline" 
-                  className="w-full text-sm sm:text-base" 
+                <Button
+                  variant="outline"
+                  className="w-full text-sm sm:text-base"
                   asChild
                 >
                   <a
@@ -240,7 +233,7 @@ export function EventView({ eventCalendars }: EventViewProps) {
             <div className="pt-4 border-t border-gray-200 dark:border-gray-800">
               <div className="flex items-center text-xs sm:text-sm text-gray-500 dark:text-gray-400">
                 <History className="h-4 w-4 mr-1" />
-                Last updated: {formatDate(new Date(filteredEvent.updated_at))}
+                Last updated: {formatPastDate(filteredEvent.updated_at.toString())}
               </div>
             </div>
           </div>
