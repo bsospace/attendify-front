@@ -35,6 +35,7 @@ import { EditUserPage } from '@/pages/users/edit'
 import { AllGroupPage } from '@/pages/groups'
 import { GroupPage } from '@/pages/groups/view'
 import Callback from '@/pages/auth/callback'
+import { Announcement } from '@/pages/events/announcements'
 
 const publicRoutes = [
   { path: ROUTES.LOGIN, element: <LoginPage /> },
@@ -46,6 +47,7 @@ const privateRoutes = [
   { path: ROUTES.PROFILE, element: <ProfilePage /> },
   { path: ROUTES.CALENDAR, element: <CalendarPage /> },
   { path: ROUTES.SCAN, element: <ScanPage /> },
+  { path: ROUTES.ANNOUNCEMENT.BASE, element: <Announcement /> },
 
   // Activities
   { path: ROUTES.ACTIVITY.BASE, element: <AllActivityPage /> },

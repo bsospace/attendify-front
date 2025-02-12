@@ -68,6 +68,9 @@ export const ROUTES = {
     CREATE: '/group/create', // สร้างกลุ่ม AT03.5.2
     EDIT: '/group/:id/edit', // แก้ไขกลุ่ม AT03.5.3
   },
+  ANNOUNCEMENT: {
+    BASE: '/announcements', // ประกาศ AT04.1
+  }
 } as const;
 
 export const PERMISSIONS = {

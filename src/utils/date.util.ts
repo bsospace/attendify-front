@@ -1,4 +1,5 @@
-export const formatDate = (date: string) => {
+// Export a function called formatDate that takes a date as a parameter
+export const formatPastDate = (date: string) => {
     const inputDate = new Date(date);
     const now = new Date();
     const diffInSeconds = Math.floor((now.getTime() - inputDate.getTime()) / 1000);
@@ -24,3 +25,27 @@ export const formatDate = (date: string) => {
         });
     }
 };
+
+export const formatFutureDate = (date: string) => {
+    const inputDate = new Date(date);
+    const now = new Date();
+    const diffInSeconds = Math.floor((inputDate.getTime() - now.getTime()) / 1000);
+    const diffInMinutes = Math.floor(diffInSeconds / 60);
+    const diffInHours = Math.floor(diffInMinutes / 60);
+
+
+    if (diffInSeconds < 60 && diffInSeconds > 0) {
+        return `${diffInSeconds} seconds`;
+    }
+    else if(diffInMinutes < 60 && diffInMinutes > 0) {
+        return `${diffInMinutes} minutes`;
+    }
+    else if (diffInHours < 24 && diffInHours > 0) {
+        return `${diffInHours} hours`;
+    }
+    return inputDate.toLocaleDateString("en-GB", {
+        day: "numeric",
+        month: "short",
+        year: "numeric",
+    });
+}

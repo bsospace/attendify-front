@@ -20,7 +20,7 @@ import { useParams, useSearchParams } from 'react-router-dom'
 import { NotFoundPage } from '../not-found'
 import { AxiosError } from 'axios'
 import { updateSearchParams } from '@/utils/url.util'
-import { formatDate } from '@/utils/date.util'
+import { formatPastDate } from '@/utils/date.util'
 
 type UsersGroup = {
     id: string;
@@ -223,8 +223,8 @@ export function GroupPage() {
                 <p className="text-gray-700">{group?.description || "No description available."}</p>
 
                 <div className="text-gray-600">
-                    <p><span className="font-semibold">Created At:</span> {group?.created_at ? formatDate(group.created_at) : "N/A"}</p>
-                    <p><span className="font-semibold">Updated At:</span> {group?.updated_at ? formatDate(group.updated_at) : "N/A"}</p>
+                    <p><span className="font-semibold">Created At:</span> {group?.created_at ? formatPastDate(group.created_at) : "N/A"}</p>
+                    <p><span className="font-semibold">Updated At:</span> {group?.updated_at ? formatPastDate(group.updated_at) : "N/A"}</p>
                 </div>
             </div>
 

@@ -1,5 +1,5 @@
 import { useAuth, User } from "@/hooks/useAuth";
-import { GroupDialog } from "./dialog";
+// import { GroupDialog } from "./dialog";
 import { useEffect, useState } from "react";
 import { useBreadcrumb } from "@/providers/breadcrumb-provider";
 import { ColumnDef } from "@tanstack/react-table";
@@ -19,7 +19,7 @@ import { envConfig } from "@/config/envConfig";
 import { API_ENDPOINTS, ROUTES } from "@/lib/constants";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { updateSearchParams } from "@/utils/url.util";
-import { formatDate } from "@/utils/date.util";
+// import { formatDate } from "@/utils/date.util";
 
 // Model
 export type Group = {
@@ -73,7 +73,7 @@ export const columns: ColumnDef<Group>[] = [
     },
     cell: ({ row }) => {
       return (
-        <div className="font-medium">{formatDate(row.original.created_at)}</div>
+        <div className="font-medium">{(row.original.created_at)}</div>
       );
     },
     filterFn: "includesString",
@@ -86,7 +86,7 @@ export const columns: ColumnDef<Group>[] = [
     },
     cell: ({ row }) => {
       return (
-        <div className="font-medium">{formatDate(row.original.updated_at)}</div>
+        <div className="font-medium">{(row.original.updated_at)}</div>
       );
     },
     filterFn: "includesString",
@@ -202,7 +202,7 @@ export function AllGroupPage() {
   return (
     <div className="space-y-6">
       this is the view all groups page user: {user?.username}
-      <GroupDialog />
+      {/* <GroupDialog /> */}
       <DataTable
         columns={columns}
         data={groups}
