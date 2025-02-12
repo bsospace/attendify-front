@@ -39,6 +39,6 @@ export const apiClient = {
   put: <T>(url: string, data: unknown): Promise<ApiResponse<T>> =>
     api.put(url, data).then((response) => response.data),
   
-  delete: <T>(url: string): Promise<ApiResponse<T>> =>
-    api.delete(url).then((response) => response.data),
+  delete: <T>(url: string, config: unknown): Promise<ApiResponse<T>> =>
+    api.delete(url, config).then((response) => response.data),
 };
