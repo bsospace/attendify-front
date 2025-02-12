@@ -139,7 +139,7 @@ export function HomePage() {
                         <h3 className="text-xl font-semibold mb-2 line-clamp-1 group-hover:text-blue-600 transition-colors">
                           {card.name}
                         </h3>
-                        <p className="text-gray-500 line-clamp-2 group-hover:line-clamp-none transition-all h-12">
+                        <p className="text-gray-500 line-clamp-2 transition-all h-12">
                           {card.description}
                         </p>
                         <div className="mt-3 space-y-1">
