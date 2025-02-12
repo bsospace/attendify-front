@@ -33,7 +33,7 @@ export function PageLayout({ children }: PageLayoutProps) {
         <div className="lg:block hidden">
           <Footer />
         </div>
-        <div className="lg:hidden sticky bottom-0 h-16">
+        <div className="lg:hidden sticky bottom-0 h-16 z-50">
           <NavBottom />
         </div>
       </SidebarInset>
