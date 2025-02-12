@@ -76,8 +76,8 @@ export function EventView({ eventCalendars }: EventViewProps) {
   return (
     <AlertDialog open={eventViewOpen}>
       <AlertDialogContent className={cn(
-        "w-full max-w-3xl p-0 bg-white/95 dark:bg-gray-900/95 shadow-2xl",
-        "border border-gray-200/50 dark:border-gray-800/50",
+        "w-full max-w-3xl p-0 bg-white/95 shadow-2xl",
+        "border border-gray-200/50",
         "sm:max-h-[90vh] overflow-y-auto",
         "mx-auto sm:mx-4"
       )}>
