@@ -27,7 +27,7 @@ import { envConfig } from "@/config/envConfig";
 import { API_ENDPOINTS, ROUTES } from "@/lib/constants";
 import { useSearchParams } from "react-router-dom";
 import { updateSearchParams } from "@/utils/url.util";
-import { formatDate } from "@/utils/date.util";
+import { formatPastDate } from "@/utils/date.util";
 import { toast } from "sonner";
 
 // Model
@@ -73,13 +73,13 @@ export const columns = (
     {
         accessorKey: "created_at",
         header: ({ column }) => <DataTableColumnHeader column={column} title="Created At" />,
-        cell: ({ row }) => <div className="font-medium">{formatDate(row.original.created_at)}</div>,
+        cell: ({ row }) => <div className="font-medium">{formatPastDate(row.original.created_at)}</div>,
         filterFn: "includesString",
     },
     {
         accessorKey: "updated_at",
         header: ({ column }) => <DataTableColumnHeader column={column} title="Updated At" />,
-        cell: ({ row }) => <div className="font-medium">{formatDate(row.original.updated_at)}</div>,
+        cell: ({ row }) => <div className="font-medium">{formatPastDate(row.original.updated_at)}</div>,
         filterFn: "includesString",
     },
     {

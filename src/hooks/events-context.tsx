@@ -5,6 +5,7 @@ import { event } from "@/interface";
 
 interface EventsContextType {
   calendarEvents: CalendarEvent[];
+  fetchEvents: () => void;
   setCalendarEvents: (events: CalendarEvent[]) => void;
   events: event[];
   addEvent: (event: CalendarEvent) => void;
@@ -124,6 +125,7 @@ export const EventsProvider: React.FC<{ children: ReactNode }> = ({
   return (
     <EventsContext.Provider
       value={{
+        fetchEvents,
         calendarEvents,
         setCalendarEvents,
         events,

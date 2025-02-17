@@ -12,7 +12,7 @@ import { apiClient } from '@/services/api'
 import { API_ENDPOINTS } from '@/lib/constants'
 import { useParams, useSearchParams } from 'react-router-dom'
 import { updateSearchParams } from '@/utils/url.util'
-import { formatDate } from '@/utils/date.util'
+import { formatPastDate } from '@/utils/date.util'
 import { toast } from "sonner";
 import {
     Dialog,
@@ -288,12 +288,12 @@ export function GroupPage() {
                 {/* Show "Latest Update" by default */}
                 <div className="group relative">
                     <p className="text-gray-600">
-                        <span className="font-semibold">Latest Update:</span> {group?.updated_at ? formatDate(group.updated_at) : "N/A"}
+                        <span className="font-semibold">Latest Update:</span> {group?.updated_at ? formatPastDate(group.updated_at) : "N/A"}
                     </p>
 
                     {/* Show "Created At" only on hover */}
                     <div className="absolute bg-gray-800 text-white text-sm p-3 rounded-md opacity-0 group-hover:opacity-100 transition-opacity duration-200 left-0 mt-1">
-                        <p><span className="font-semibold">Created At:</span> {group?.created_at ? formatDate(group.created_at) : "N/A"}</p>
+                        <p><span className="font-semibold">Created At:</span> {group?.created_at ? formatPastDate(group.created_at) : "N/A"}</p>
                     </div>
                 </div>
             </div>

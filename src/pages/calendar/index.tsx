@@ -1,63 +1,51 @@
-import { useEffect } from 'react';
-import { useBreadcrumb } from '@/providers/breadcrumb-provider';
-import { EventsProvider } from '@/hooks/events-context';
-import { Tabs, TabsContent, TabsList } from '@radix-ui/react-tabs';
-import { Separator } from '@radix-ui/react-separator';
-import Calendar from '@/components/calendar';
+import { useEffect } from "react";
+import { useBreadcrumb } from "@/providers/breadcrumb-provider";
+import { useEvents } from "@/hooks/events-context";
+import { Separator } from "@/components/ui/separator";
+import { motion } from "framer-motion";
+import Calendar from "@/components/calendar";
 
 export function CalendarPage() {
   const [, setBreadcrumbs] = useBreadcrumb();
+  const { fetchEvents } = useEvents();
 
   useEffect(() => {
-    setBreadcrumbs([
-      { name: "Calendar" }
-    ]);
-
+    setBreadcrumbs([{ name: "Calendar" }]);
+    fetchEvents();
     return () => setBreadcrumbs(null);
-  }, [setBreadcrumbs]);
-
+  }, []);
 
   return (
-    <EventsProvider>
-      <div className="py-4">
-        <Tabs
-          defaultValue="calendar"
-          className="flex flex-col w-full items-center"
+    <>
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5, ease: "easeOut" }}
+      >
+        <motion.div
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.3, delay: 0.1 }}
         >
-          <TabsList className="flex justify-center mb-2">
-          </TabsList>
-          <TabsContent value="calendar" className="w-full space-y-5">
-            <div className="space-y-0">
-              <h2 className="flex items-center text-2xl font-semibold tracking-tight md:text-3xl">
-                Calendar
-              </h2>
-              <p className="text-xs md:text-sm font-medium">
-                A calendar built to help you manage your events.
-              </p>
-            </div>
+          <h2 className="flex items-center text-2xl font-semibold tracking-tight md:text-3xl">
+            Calendar
+          </h2>
+          <p className="text-xs md:text-sm font-medium text-gray-600 dark:text-gray-400 py-4">
+            A calendar built to help you manage your events.
+          </p>
+        </motion.div>
 
-            <Separator />
-            <Calendar />
-          </TabsContent>
-          <TabsContent
-            value="schedulingAssistant"
-            className="w-full px-5 space-y-5"
-          >
-            <div className="space-y-0">
-              <h2 className="flex items-center text-2xl font-semibold tracking-tight md:text-3xl">
-                Scheduling Assistant
-              </h2>
-              <p className="text-xs md:text-sm font-medium">
-                A scheduling assistant built to analyze a user&apos;s schedule
-                and automatically show open spots.
-              </p>
-            </div>
-            <Separator />
-            {/* <AvailabilityChecker /> */}
-          </TabsContent>
-        </Tabs>
-      </div>
-    </EventsProvider>
+        <motion.div
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.3, delay: 0.2 }}
+        >
+          <Calendar />
+        </motion.div>
+        <Separator />
+      </motion.div>
+    </>
   );
-
 }
+
+export default CalendarPage;
